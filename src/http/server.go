@@ -25,9 +25,7 @@ func (s *HttpServer) Listen() {
 	//? UserController
 	uc := do.MustInvoke[userController.UserControllerInterface](di.Injector)
 
-	fmt.Printf("Set Routes\n")
 	routes := routes.SetRoutes(app)
-	fmt.Printf("Set User Route\n")
 	userroutes.SetRouteUsers(routes, uc)
 
 	fmt.Printf("Start Lister\n")
