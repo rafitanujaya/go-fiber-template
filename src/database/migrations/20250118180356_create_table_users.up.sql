@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS manager (
+CREATE TABLE IF NOT EXISTS users (
 	id varchar(255) NOT NULL DEFAULT gen_random_uuid(),
 	email varchar(255) NOT NULL,
 	password varchar(255) NOT NULL,
