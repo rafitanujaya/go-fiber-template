@@ -4,7 +4,7 @@ import "fmt"
 
 func HealthCheck() {
 	health := Injector.HealthCheck()
-	fmt.Print("Di HealthCheck: %v\n", health)
+	fmt.Printf("Di HealthCheck: %v\n", health)
 	isHealthy := true
 	for service, err := range health {
 		if err != nil {

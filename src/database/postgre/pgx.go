@@ -13,7 +13,7 @@ import (
 
 func NewPgxConnectInject(i do.Injector) (*pgxpool.Pool, error) {
 	DbString := config.GetDBConnection()
-	fmt.Printf(DbString)
+	fmt.Printf("Connection string: %s\n", DbString)
 	tempConn, err := pgx.Connect(context.Background(), DbString)
 	if err != nil {
 		panic(err.Error())
