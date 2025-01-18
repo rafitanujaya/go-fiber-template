@@ -1,13 +1,24 @@
 package main
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/joho/godotenv"
+	_ "github.com/joho/godotenv/autoload"
+	"github.com/rafitanujaya/go-fiber-template/src/database/migrations"
+	"github.com/rafitanujaya/go-fiber-template/src/di"
+	httpServer "github.com/rafitanujaya/go-fiber-template/src/http"
+)
 
 func main() {
-	app := fiber.New()
+	err := godotenv.Load()
+	di.HealthCheck()
+	if err != nil {
+		panic(err)
+	}
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
+	//? Auto Migrate
+	migrations.Migrate()
 
-	app.Listen(":3000")
+	server := httpServer.HttpServer{}
+	server.Listen()
+
 }

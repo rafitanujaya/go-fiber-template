@@ -1,0 +1,7 @@
+.env
+storage/*
+public/*
+logs/*
+.build/*
+build/*
+.uploads/*
