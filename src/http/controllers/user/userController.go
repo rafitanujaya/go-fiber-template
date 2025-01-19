@@ -27,7 +27,7 @@ func (uc *UserController) Register(c *fiber.Ctx) error {
 	userRequestParse := request.UserRegister{}
 
 	if err := c.BodyParser(&userRequestParse); err != nil {
-		panic(exceptions.NewBadRequestError(err.Error(), 400))
+		panic(exceptions.NewBadRequestError(err.Error()))
 	}
 
 	response, err := uc.userService.Register(context.Background(), userRequestParse)

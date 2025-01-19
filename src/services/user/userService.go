@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v5/pgxpool"
 	authJwt "github.com/rafitanujaya/go-fiber-template/src/auth/jwt"
 	"github.com/rafitanujaya/go-fiber-template/src/exceptions"
@@ -24,10 +25,11 @@ type userService struct {
 	Db             *pgxpool.Pool
 	jwtService     authJwt.JwtServiceInterface
 	Logger         loggerZap.LoggerInterface
+	validate       *validator.Validate
 }
 
-func NewUserService(userRepo userRepository.UserRepositoryInterface, db *pgxpool.Pool, jwtService authJwt.JwtServiceInterface, logger loggerZap.LoggerInterface) UserServiceInterface {
-	return &userService{UserRepository: userRepo, Db: db, jwtService: jwtService, Logger: logger}
+func NewUserService(userRepo userRepository.UserRepositoryInterface, db *pgxpool.Pool, jwtService authJwt.JwtServiceInterface, logger loggerZap.LoggerInterface, validate *validator.Validate) UserServiceInterface {
+	return &userService{UserRepository: userRepo, Db: db, jwtService: jwtService, Logger: logger, validate: validate}
 }
 
 func NewUserServiceInject(i do.Injector) (UserServiceInterface, error) {
@@ -35,12 +37,17 @@ func NewUserServiceInject(i do.Injector) (UserServiceInterface, error) {
 	_userRepo := do.MustInvoke[userRepository.UserRepositoryInterface](i)
 	_jwtService := do.MustInvoke[authJwt.JwtServiceInterface](i)
 	_logger := do.MustInvoke[loggerZap.LoggerInterface](i)
+	_validate := do.MustInvoke[*validator.Validate](i)
 
-	return NewUserService(_userRepo, _db, _jwtService, _logger), nil
+	return NewUserService(_userRepo, _db, _jwtService, _logger, _validate), nil
 }
 
 func (us *userService) Register(ctx context.Context, input request.UserRegister) (response.UserRegister, error) {
 	// TODO Validate Input
+	err := us.validate.Struct(input)
+	if err != nil {
+		return response.UserRegister{}, exceptions.NewBadRequestError(err.Error())
+	}
 
 	user := Entity.User{}
 
@@ -62,7 +69,7 @@ func (us *userService) Register(ctx context.Context, input request.UserRegister)
 	if err != nil {
 		fmt.Println(err)
 		if strings.Contains(err.Error(), "23505") {
-			return response.UserRegister{}, exceptions.NewConflictError("Data Conflict", 409)
+			return response.UserRegister{}, exceptions.NewConflictError("Data Conflict")
 		} else {
 			us.Logger.Error(err.Error(), functionCallerInfo.UserServiceRegister)
 			return response.UserRegister{}, err

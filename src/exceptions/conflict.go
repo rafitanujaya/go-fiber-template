@@ -2,11 +2,11 @@ package exceptions
 
 type ConflictError struct {
 	Message    string
-	StatusCode int16
+	StatusCode int
 }
 
-func NewConflictError(message string, statusCode int16) *ConflictError {
-	return &ConflictError{Message: message, StatusCode: statusCode}
+func NewConflictError(message string) *ConflictError {
+	return &ConflictError{Message: message, StatusCode: 409}
 }
 
 func (e *ConflictError) Error() string {

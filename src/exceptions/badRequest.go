@@ -2,11 +2,11 @@ package exceptions
 
 type BadRequestError struct {
 	Message    string
-	StatusCode int16
+	StatusCode int
 }
 
-func NewBadRequestError(message string, statusCode int16) *BadRequestError {
-	return &BadRequestError{Message: message, StatusCode: statusCode}
+func NewBadRequestError(message string) *BadRequestError {
+	return &BadRequestError{Message: message, StatusCode: 400}
 }
 
 func (e *BadRequestError) Error() string {
